@@ -31,8 +31,16 @@ app.use(express.static(path.join(__dirname, "dist"), {
   }
 }));
 
-// 🔧 FIX: טיפול מיוחד בקבצי Cesium
-app.use('/Cesium', express.static(path.join(__dirname, "dist", "Cesium"), {
+// 🔧 FIX: טיפול מיוחד בקבצי Cesium (lowercase!)
+app.use('/cesium', express.static(path.join(__dirname, "dist", "cesium"), {
+  maxAge: '1d',
+  setHeaders: (res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+}));
+
+// 🔧 FIX: תמיכה גם ב-Cesium uppercase (redirect)
+app.use('/Cesium', express.static(path.join(__dirname, "dist", "cesium"), {
   maxAge: '1d',
   setHeaders: (res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
