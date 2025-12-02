@@ -10,57 +10,43 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // CORS – חובה כדי לאפשר טעינת tiles מהענן
-app.use(cors({ origin: "*"}));
+app.use(cors({ origin: "*" }));
 
-// 🔧 FIX: שירות סטטי עם הגדרות נכונות
-app.use(express.static(path.join(__dirname, "dist"), {
-  maxAge: '1d', // Cache למשך יום
-  etag: true,
-  lastModified: true,
-  setHeaders: (res, filePath) => {
-    // 🔧 FIX: הגדרת Content-Type נכונה לקבצי WASM
-    if (filePath.endsWith('.wasm')) {
+// ✅ 1. טיפול בקבצי Cesium - תומך גם ב-/cesium וגם ב-/Cesium
+app.use(["/cesium", "/Cesium"], express.static(path.join(__dirname, "dist/cesium"), {
+  setHeaders: (res, filepath) => {
+    // הגדרת Content-Type נכונה לפי סוג הקובץ
+    if (filepath.endsWith('.wasm')) {
       res.setHeader('Content-Type', 'application/wasm');
-    }
-    // 🔧 FIX: הגדרת Content-Type נכונה לקבצי JSON
-    if (filePath.endsWith('.json')) {
+    } else if (filepath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (filepath.endsWith('.json')) {
       res.setHeader('Content-Type', 'application/json');
+    } else if (filepath.endsWith('.jpg') || filepath.endsWith('.jpeg')) {
+      res.setHeader('Content-Type', 'image/jpeg');
+    } else if (filepath.endsWith('.png')) {
+      res.setHeader('Content-Type', 'image/png');
     }
-    // 🔧 FIX: CORS headers לכל הקבצים
-    res.setHeader('Access-Control-Allow-Origin', '*');
+  },
+  fallthrough: false // ⚠️ חשוב! אל תמשיך ל-fallback אם הקובץ לא נמצא
+}));
+
+// ✅ 2. טיפול בשאר הקבצים הסטטיים
+app.use(express.static(path.join(__dirname, "dist"), {
+  setHeaders: (res, filepath) => {
+    if (filepath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (filepath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
   }
 }));
 
-// 🔧 FIX: טיפול מיוחד בקבצי Cesium (lowercase!)
-app.use('/cesium', express.static(path.join(__dirname, "dist", "cesium"), {
-  maxAge: '1d',
-  setHeaders: (res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-  }
-}));
-
-// 🔧 FIX: תמיכה גם ב-Cesium uppercase (redirect)
-app.use('/Cesium', express.static(path.join(__dirname, "dist", "cesium"), {
-  maxAge: '1d',
-  setHeaders: (res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-  }
-}));
-
-// 🔧 FIX: טיפול מיוחד ב-assets
-app.use('/assets', express.static(path.join(__dirname, "dist", "assets"), {
-  maxAge: '1d',
-  setHeaders: (res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-  }
-}));
-
-// SPA fallback - חייב להיות אחרון!
+// ✅ 3. SPA Fallback - רק אחרי שניסינו למצוא קבצים סטטיים
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 app.listen(PORT, () => {
   console.log(`🚀 Server live on ${PORT}`);
-  console.log(`📁 Serving from: ${path.join(__dirname, "dist")}`);
 });
