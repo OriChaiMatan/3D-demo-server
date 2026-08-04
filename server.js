@@ -42,6 +42,15 @@ app.use(express.static(path.join(__dirname, "dist"), {
   }
 }));
 
+// ✅ Health endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    service: "realestate-viewer",
+    timestamp: new Date().toISOString()
+  });
+});
+
 // ✅ 3. SPA Fallback - רק אחרי שניסינו למצוא קבצים סטטיים
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
