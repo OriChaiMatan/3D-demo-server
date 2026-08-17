@@ -12,9 +12,29 @@
          notched/home-indicator iPhones. Verified to have no effect on
          Android/desktop, where the inset always evaluates to 0. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- Both Heebo subsets are on screen in the first frame of the entrance
+         (project name in Hebrew, LOGO mark in Latin), so both are genuinely
+         initial-render resources rather than speculative preloads. They are
+         fetched in parallel with the app bundle instead of waiting for CSS
+         to be parsed first; ~42KB combined, and crossorigin is required even
+         same-origin because font requests are CORS-mode. -->
+    <link
+      rel="preload"
+      href="/assets/fonts/heebo-hebrew-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/heebo-latin-var.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <title>Real-Estate 3D Map</title>
-    <script type="module" crossorigin src="/assets/index-wJlSdYgM.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-B6kj0ora.css">
+    <script type="module" crossorigin src="/assets/index-Woe7u3-U.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CiGL1IEk.css">
   </head>
   <body>
     <div id="app"></div>
