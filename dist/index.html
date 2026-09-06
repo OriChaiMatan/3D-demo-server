@@ -1,5 +1,12 @@
 <!doctype html>
-<html lang="en">
+<!-- PRE-BOOT FALLBACK ONLY. The static document is what assistive technology
+     sees between parse and Vue mount; setLang() then makes both attributes
+     authoritative from PROJECT_CONFIG.locale.defaultLang (or the persisted
+     preference). These values must match that configured default -- a project
+     that opens in an LTR language changes them here once, because templating
+     them would mean either a build plugin or server-side rendering, and
+     removing them would leave the first frame direction-less. -->
+<html lang="he" dir="rtl">
   <head>
     <link rel="stylesheet" href="/cesium/Widgets/widgets.css">
     <script src="/cesium/Cesium.js"></script>
@@ -33,8 +40,8 @@
       crossorigin
     />
     <title>Real-Estate 3D Map</title>
-    <script type="module" crossorigin src="/assets/index-Woe7u3-U.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CiGL1IEk.css">
+    <script type="module" crossorigin src="/assets/index-x_6SM55G.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CFGwWi3z.css">
   </head>
   <body>
     <div id="app"></div>
